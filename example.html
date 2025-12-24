@@ -28,85 +28,57 @@
 }
 
     </style>
+
+    <script src="shape-outside-line-box.js"></script>
+
     <script>
-      function outlineHeader() {
-      const textShape = document.getElementById('text-shape');
+   
+      function outlineLines() {
+        const container = document.getElementById('text-shape');
+        
+        // Clear any existing outlines first
+        document.querySelectorAll('.line-box-outline').forEach(el => el.remove());
 
-      const textShapeRange = document.createRange();
-    textShapeRange.selectNodeContents(textShape);
+        // Create a Range object for the content of the container
+        const range = document.createRange();
+        range.selectNodeContents(container);
 
-      const textShapeRects = textShapeRange.getClientRects();
+        // Get a collection of ClientRect objects, one for each line box
+        const rects = range.getClientRects();
 
-    var shapeString = '';
-
-    for (let i = 0; i < textShapeRects.length; i++) {
-        const textShapeRect = textShapeRects[i];
+        // Get the container's position to use as an offset for absolute positioning
+        const containerRect = container.getBoundingClientRect();
+        const containerStyle = window.getComputedStyle(container);
+        const containerPaddingLeft = parseFloat(containerStyle.paddingLeft);
+        const containerPaddingTop = parseFloat(containerStyle.paddingTop);
       
-            var separator = ``;
-      if (i > 0) {
-        separator = `, `;
-      };
-      shapeString = shapeString + separator + `${textShapeRect.left}px ${textShapeRect.top}px, ${textShapeRect.right}px ${textShapeRect.top}px, ${textShapeRect.right}px ${textShapeRect.bottom}px, ${textShapeRect.left}px ${textShapeRect.bottom}px`;
 
-    }
-    console.log(shapeString);
-  textShape.style.float = `left`;
-  textShape.style.shapeOutside = `polygon(${shapeString})`;
-  textShape.style.shapeMargin = `.35rem`;
+        for (let i = 0; i < rects.length; i++) {
+            const rect = rects[i];
 
-}
+            // Create a new div element for the outline
+            const outlineDiv = document.createElement('div');
+            outlineDiv.classList.add('line-box-outline');
 
-function outlineLines() {
-    const container = document.getElementById('text-shape');
-    
-    // Clear any existing outlines first
-    document.querySelectorAll('.line-box-outline').forEach(el => el.remove());
-
-    // Create a Range object for the content of the container
-    const range = document.createRange();
-    range.selectNodeContents(container);
-
-    // Get a collection of ClientRect objects, one for each line box
-    const rects = range.getClientRects();
-
-    // Get the container's position to use as an offset for absolute positioning
-    const containerRect = container.getBoundingClientRect();
-    const containerStyle = window.getComputedStyle(container);
-    const containerPaddingLeft = parseFloat(containerStyle.paddingLeft);
-    const containerPaddingTop = parseFloat(containerStyle.paddingTop);
-  
-
-    for (let i = 0; i < rects.length; i++) {
-        const rect = rects[i];
-
-        // Create a new div element for the outline
-        const outlineDiv = document.createElement('div');
-        outlineDiv.classList.add('line-box-outline');
-
-        // Position and size the div based on the client rect
-        // We use 'px' values from the calculated bounding boxes
-        outlineDiv.style.top = `${rect.top - containerRect.top + containerPaddingTop}px`;
-        outlineDiv.style.left = `${rect.left - containerRect.left + containerPaddingLeft}px`;
-        outlineDiv.style.width = `${rect.width}px`;
-        outlineDiv.style.height = `${rect.height}px`;
-      
-        // Append the outline to the body or a specific overlay container
-        // Appending to the body works if the container is not the positioning context
-        container.appendChild(outlineDiv); 
-    }
-}
-
-
-window.addEventListener("load", (event) => {
-  outlineHeader();
-});
+            // Position and size the div based on the client rect
+            // We use 'px' values from the calculated bounding boxes
+            outlineDiv.style.top = `${rect.top - containerRect.top + containerPaddingTop}px`;
+            outlineDiv.style.left = `${rect.left - containerRect.left + containerPaddingLeft}px`;
+            outlineDiv.style.width = `${rect.width}px`;
+            outlineDiv.style.height = `${rect.height}px`;
+          
+            // Append the outline to the body or a specific overlay container
+            // Appending to the body works if the container is not the positioning context
+            container.appendChild(outlineDiv); 
+        }
+      }
 
 
     </script>
   </head>
   <body>
     <div id="text-container">
-      <h1 id="text-shape">My awesome headline here</h1>
+      <h1 id="text-shape" contenteditable="true">My awesome headline here</h1>
       <p>
           This is some sample text that is long enough to wrap onto multiple lines within its container. The JavaScript code will outline each individual line box using dynamic overlay elements. This is some sample text that is long enough to wrap onto multiple lines within its container. The JavaScript code will outline each individual line box using dynamic overlay elements. This is some sample text that is long enough to wrap onto multiple lines within its container. The JavaScript code will outline each individual line box using dynamic overlay elements.
           This is some sample text that is long enough to wrap onto multiple lines within its container. The JavaScript code will outline each individual line box using dynamic overlay elements. This is some sample text that is long enough to wrap onto multiple lines within its container. The JavaScript code will outline each individual line box using dynamic overlay elements. This is some sample text that is long enough to wrap onto multiple lines within its container. The JavaScript code will outline each individual line box using dynamic overlay elements.
