@@ -21,7 +21,7 @@ function outlineHeader() {
   //console.log(shapeString);
   textShape.style.float = `left`;
   textShape.style.shapeOutside = `polygon(${shapeString})`;
-  textShape.style.shapeMargin = `.35rem`;
+  //textShape.style.shapeMargin = `.35rem`;
 
 }
 
@@ -29,3 +29,10 @@ window.addEventListener("load", (event) => {
   outlineHeader();
 });
 
+window.addEventListener("resize", (event) => {
+  outlineHeader();
+});
+
+window.addEventListener("change", (event) => {
+  outlineHeader();
+});
