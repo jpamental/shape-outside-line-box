@@ -5,6 +5,10 @@ function outlineText() {
 
     let textShape = lineboxWraps[i];
 
+    let textShapeStyle = getComputedStyle(textShape);
+    let textShapeSize = parseFloat(textShapeStyle.getPropertyValue('font-size'));
+    console.log(textShapeSize);
+
     let textShapeFloat = 'left';
 
     if (textShape.classList.contains('linebox-float-right')) {
@@ -24,7 +28,7 @@ function outlineText() {
     let containerPaddingTop = parseFloat(containerStyle.paddingTop);
 
     // Create shape margin
-    let shapeMargin =  16;
+    let shapeMargin =  textShapeSize / 2;
     
 
     var shapeString = '';
@@ -38,9 +42,9 @@ function outlineText() {
       };
       shapeString = shapeString + separator + `
         ${textShapeRect.left - containerRect.left + containerPaddingLeft}px ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
-        ${textShapeRect.right + shapeMargin - containerRect.left + containerPaddingLeft}px ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
-        ${textShapeRect.right + shapeMargin - containerRect.left + containerPaddingLeft}px ${textShapeRect.bottom  - containerRect.top + containerPaddingTop}px, 
-        ${textShapeRect.left - containerRect.left + containerPaddingLeft}px ${textShapeRect.bottom  - containerRect.top + containerPaddingTop}px`;
+        ${((textShapeRect.right + shapeMargin - containerRect.left + containerPaddingLeft) / textShapeSize)}em ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
+        ${((textShapeRect.right + shapeMargin - containerRect.left + containerPaddingLeft) / textShapeSize)}em ${(textShapeRect.top  - containerRect.top + containerPaddingTop + textShapeSize)}px, 
+        ${textShapeRect.left - containerRect.left + containerPaddingLeft}px ${(textShapeRect.top  - containerRect.top + containerPaddingTop + textShapeSize)}px`;
 
     }
     //console.log(shapeString);
