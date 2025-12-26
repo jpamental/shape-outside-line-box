@@ -7,7 +7,7 @@ function outlineText() {
 
     let textShapeStyle = getComputedStyle(textShape);
     let textShapeSize = parseFloat(textShapeStyle.getPropertyValue('font-size'));
-    console.log(textShapeSize);
+    
 
     let textShapeFloat = 'left';
 
@@ -26,26 +26,43 @@ function outlineText() {
     let containerStyle = window.getComputedStyle(textShape);
     let containerPaddingLeft = parseFloat(containerStyle.paddingLeft);
     let containerPaddingTop = parseFloat(containerStyle.paddingTop);
+    let containerWidth = parseFloat(containerStyle.width);
 
     // Create shape margin
-    let shapeMargin =  textShapeSize / 2;
-    
+    let shapeMargin =  textShapeSize / 2;  
 
-    var shapeString = '';
+    let shapeString = '';
 
     for (let j = 0; j < textShapeRects.length; j++) {
-        let textShapeRect = textShapeRects[j];
+      let textShapeRect = textShapeRects[j];
+
+      let textShapeRectWidth = textShapeRect.width;
+      console.log(textShapeRectWidth);
+
+      let textShapeOffset = 0;
+      if (textShapeFloat == 'right') {
+        textShapeOffset = containerWidth - textShapeRectWidth;
+      }
       
-            var separator = ``;
+      let separator = ``;
+      
       if (j > 0) {
         separator = `, `;
       };
-      shapeString = shapeString + separator + `
-        ${textShapeRect.left - containerRect.left + containerPaddingLeft}px ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
-        ${((textShapeRect.right + shapeMargin - containerRect.left + containerPaddingLeft) / textShapeSize)}em ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
-        ${((textShapeRect.right + shapeMargin - containerRect.left + containerPaddingLeft) / textShapeSize)}em ${(textShapeRect.top  - containerRect.top + containerPaddingTop + textShapeSize)}px, 
-        ${textShapeRect.left - containerRect.left + containerPaddingLeft}px ${(textShapeRect.top  - containerRect.top + containerPaddingTop + textShapeSize)}px`;
-
+      
+      if (textShapeFloat == 'left') {
+        shapeString = shapeString + separator + `
+          ${textShapeRect.left - containerRect.left + containerPaddingLeft + textShapeOffset}px ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
+          ${((textShapeRect.right + shapeMargin - containerRect.left + containerPaddingLeft + textShapeOffset) / textShapeSize)}em ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
+          ${((textShapeRect.right + shapeMargin - containerRect.left + containerPaddingLeft + textShapeOffset) / textShapeSize)}em ${(textShapeRect.top  - containerRect.top + containerPaddingTop + textShapeSize)}px, 
+          ${textShapeRect.left - containerRect.left + containerPaddingLeft + textShapeOffset}px ${(textShapeRect.top  - containerRect.top + containerPaddingTop + textShapeSize)}px`;
+      } else {
+        shapeString = shapeString + separator + `
+          ${((textShapeRect.right - containerRect.left + containerPaddingLeft + textShapeOffset) / textShapeSize)}em ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
+          ${textShapeRect.left - containerRect.left + containerPaddingLeft + textShapeOffset - shapeMargin}px ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
+          ${textShapeRect.left - containerRect.left + containerPaddingLeft + textShapeOffset - shapeMargin}px ${(textShapeRect.top  - containerRect.top + containerPaddingTop + textShapeSize)}px,
+          ${((textShapeRect.right - containerRect.left + containerPaddingLeft + textShapeOffset) / textShapeSize)}em ${(textShapeRect.top  - containerRect.top + containerPaddingTop + textShapeSize)}px`;
+      }
     }
     //console.log(shapeString);
     textShape.style.float = textShapeFloat;
@@ -64,9 +81,5 @@ window.addEventListener("load", (event) => {
 });
 
 window.addEventListener("resize", (event) => {
-  outlineText();
-});
-
-window.addEventListener("change", (event) => {
   outlineText();
 });
