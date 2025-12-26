@@ -11,12 +11,23 @@
     line-height: 1.4;
 }
 
-#text-shape {
+h1 {
   display: block;
   position: relative;
   max-width: 50%;
   padding: 0;
-  line-height: 4;
+  margin: 0;
+  line-height: 3;
+}
+
+
+h2 {
+  display: block;
+  position: relative;
+  max-width: 50%;
+  padding: 0;
+  margin: 0;
+  line-height: 1.5;
 }
 
 .line-box-outline {
@@ -78,10 +89,15 @@
   </head>
   <body>
     <div id="text-container">
-      <h1 id="text-shape" contenteditable="true">My awesome headline here</h1>
+      <h1 class="linebox-wrap linebox-float-left">My awesome headline here</h1>
       <p>
           This is some sample text that is long enough to wrap onto multiple lines within its container. The JavaScript code will outline each individual line box using dynamic overlay elements. This is some sample text that is long enough to wrap onto multiple lines within its container. The JavaScript code will outline each individual line box using dynamic overlay elements. This is some sample text that is long enough to wrap onto multiple lines within its container. The JavaScript code will outline each individual line box using dynamic overlay elements.
           This is some sample text that is long enough to wrap onto multiple lines within its container. The JavaScript code will outline each individual line box using dynamic overlay elements. This is some sample text that is long enough to wrap onto multiple lines within its container. The JavaScript code will outline each individual line box using dynamic overlay elements. This is some sample text that is long enough to wrap onto multiple lines within its container. The JavaScript code will outline each individual line box using dynamic overlay elements.
+      </p>
+      <h2 class="linebox-wrap">There must be another smaller headline</h2>
+      <p>
+                  This is some sample text that is long enough to wrap onto multiple lines within its container. The JavaScript code will outline each individual line box using dynamic overlay elements. This is some sample text that is long enough to wrap onto multiple lines within its container. The JavaScript code will outline each individual line box using dynamic overlay elements. This is some sample text that is long enough to wrap onto multiple lines within its container. The JavaScript code will outline each individual line box using dynamic overlay elements.
+
       </p>
     </div>
     <button onclick="outlineLines()">Outline Line Boxes</button>

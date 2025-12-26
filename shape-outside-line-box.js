@@ -1,38 +1,68 @@
-function outlineHeader() {
-  const textShape = document.getElementById('text-shape');
+function outlineText() {
+  const lineboxWraps = document.getElementsByClassName('linebox-wrap');
 
-  const textShapeRange = document.createRange();
-  textShapeRange.selectNodeContents(textShape);
+  for (let i = 0; i < lineboxWraps.length; i++) {
 
-  const textShapeRects = textShapeRange.getClientRects();
+    let textShape = lineboxWraps[i];
 
-  var shapeString = '';
+    let textShapeFloat = 'left';
 
-  for (let i = 0; i < textShapeRects.length; i++) {
-      const textShapeRect = textShapeRects[i];
+    if (textShape.classList.contains('linebox-float-right')) {
+      textShapeFloat = 'right';
+    }
+
+    let textShapeRange = document.createRange();
+    textShapeRange.selectNodeContents(textShape);
+
+
+    let textShapeRects = textShapeRange.getClientRects();
+
+    // Get the container's position to use as an offset for absolute positioning
+    let containerRect = textShape.getBoundingClientRect();
+    let containerStyle = window.getComputedStyle(textShape);
+    let containerPaddingLeft = parseFloat(containerStyle.paddingLeft);
+    let containerPaddingTop = parseFloat(containerStyle.paddingTop);
+
+    // Create shape margin
+    let shapeMargin =  16;
     
-          var separator = ``;
-    if (i > 0) {
-      separator = `, `;
-    };
-    shapeString = shapeString + separator + `${textShapeRect.left}px ${textShapeRect.top}px, ${textShapeRect.right}px ${textShapeRect.top}px, ${textShapeRect.right}px ${textShapeRect.bottom}px, ${textShapeRect.left}px ${textShapeRect.bottom}px`;
+
+    var shapeString = '';
+
+    for (let j = 0; j < textShapeRects.length; j++) {
+        let textShapeRect = textShapeRects[j];
+      
+            var separator = ``;
+      if (j > 0) {
+        separator = `, `;
+      };
+      shapeString = shapeString + separator + `
+        ${textShapeRect.left - containerRect.left + containerPaddingLeft}px ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
+        ${textShapeRect.right + shapeMargin - containerRect.left + containerPaddingLeft}px ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
+        ${textShapeRect.right + shapeMargin - containerRect.left + containerPaddingLeft}px ${textShapeRect.bottom  - containerRect.top + containerPaddingTop}px, 
+        ${textShapeRect.left - containerRect.left + containerPaddingLeft}px ${textShapeRect.bottom  - containerRect.top + containerPaddingTop}px`;
+
+    }
+    //console.log(shapeString);
+    textShape.style.float = textShapeFloat;
+    textShape.style.textAlign = textShapeFloat;
+    textShape.style.shapeOutside = `polygon(${shapeString})`;
 
   }
-  //console.log(shapeString);
-  textShape.style.float = `left`;
-  textShape.style.shapeOutside = `polygon(${shapeString})`;
-  //textShape.style.shapeMargin = `.35rem`;
+
+
 
 }
 
+
 window.addEventListener("load", (event) => {
-  outlineHeader();
+  outlineText();
 });
 
 window.addEventListener("resize", (event) => {
-  outlineHeader();
+  outlineText();
 });
 
 window.addEventListener("change", (event) => {
-  outlineHeader();
+  outlineText();
 });
