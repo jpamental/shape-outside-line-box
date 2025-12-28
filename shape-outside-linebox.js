@@ -1,61 +1,101 @@
 class SHAPE_OUTSIDE_LINEBOX extends HTMLElement {
-    constructor() {
-        super();
+  static get observedAttributes() { return ['tag', 'text']; }
 
-        this.Loaded;
-    }
+  constructor() {
+    super();
+  }
 
-    connectedCallback() {
+  connectedCallback() {
 
-console.log('Query Selector : ' ,this.querySelector('h1'))
-        if(!this.Loaded)
-            this.TraceText();
-    }
+    // Create a shadow root
+    const shadow = this.attachShadow({ mode: "open" });
 
-    async TraceText() {
+    // Create spans
+    const tag = document.createElement((this.getAttribute('tag') || 'div').toLowerCase());
+    //tag.setAttribute("class", "shape-outside-linebox");
+    tag.setAttribute("class", "shape-outside-linebox");
 
-function TraceText() {
-  console.log('First child element:', this.firstElementChild);
-  const textElement = this.firstElementChild;
-  const textShape = textElement.innerHTML;
+    const floatSide = (this.getAttribute('float-side') || 'left').toLowerCase();
+    tag.style.cssFloat = floatSide;
+    tag.style.textAlign = floatSide;
+    tag.style.margin = 0;
+    tag.style.maxWidth = '75%';
+    tag.style.textWrap = 'balance'
 
-  const textShapeRange = document.createRange();
-  textShapeRange.selectNodeContents(textShape);
 
-  const textShapeRects = textShapeRange.getClientRects();
+    const textAttr = this.getAttribute('text');
+    tag.textContent = textAttr !== null ? textAttr : elementText || '';
 
-  var shapeString = '';
+    shadow.appendChild(tag);
 
-  for (let i = 0; i < textShapeRects.length; i++) {
-      const textShapeRect = textShapeRects[i];
+
+    let textShape = tag;
+
+    let textShapeStyle = getComputedStyle(textShape);
+    let textShapeSize = parseFloat(textShapeStyle.getPropertyValue('font-size'));
     
-          var separator = ``;
-    if (i > 0) {
-      separator = `, `;
-    };
-    shapeString = shapeString + separator + `${textShapeRect.left}px ${textShapeRect.top}px, ${textShapeRect.right}px ${textShapeRect.top}px, ${textShapeRect.right}px ${textShapeRect.bottom}px, ${textShapeRect.left}px ${textShapeRect.bottom}px`;
+    let textShapeRange = document.createRange();
+    textShapeRange.selectNodeContents(textShape);
+
+
+    let textShapeRects = textShapeRange.getClientRects();
+    console.log(textShape);
+    // Get the container's position to use as an offset for absolute positioning
+    let containerRect = textShape.getBoundingClientRect();
+    let containerStyle = window.getComputedStyle(textShape);
+    let containerPaddingLeft = parseFloat(containerStyle.paddingLeft);
+    let containerPaddingTop = parseFloat(containerStyle.paddingTop);
+    let containerWidth = parseFloat(containerStyle.width);
+
+    // Create shape margin
+    let shapeMargin =  textShapeSize / 2;  
+
+    let shapeString = '';
+
+    for (let j = 0; j < textShapeRects.length; j++) {
+      let textShapeRect = textShapeRects[j];
+console.log(textShapeRect);
+
+      let textShapeRectWidth = textShapeRect.width;
+      console.log('new' + textShapeRectWidth);
+
+      let textShapeOffset = 0;
+      if (floatSide == 'right') {
+        textShapeOffset = containerWidth - textShapeRectWidth;
+      }
+      
+      let separator = ``;
+      
+      if (j > 0) {
+        separator = `, `;
+      };
+      
+      if (floatSide == 'left') {
+        shapeString = shapeString + separator + `
+          ${textShapeRect.left - containerRect.left + containerPaddingLeft + textShapeOffset}px ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
+          ${((textShapeRect.right + shapeMargin - containerRect.left + containerPaddingLeft + textShapeOffset) / textShapeSize)}em ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
+          ${((textShapeRect.right + shapeMargin - containerRect.left + containerPaddingLeft + textShapeOffset) / textShapeSize)}em ${(textShapeRect.top  - containerRect.top + containerPaddingTop + textShapeSize)}px, 
+          ${textShapeRect.left - containerRect.left + containerPaddingLeft + textShapeOffset}px ${(textShapeRect.top  - containerRect.top + containerPaddingTop + textShapeSize)}px`;
+      } else {
+        shapeString = shapeString + separator + `
+          ${((textShapeRect.right - containerRect.left + containerPaddingLeft + textShapeOffset) / textShapeSize)}em ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
+          ${textShapeRect.left - containerRect.left + containerPaddingLeft + textShapeOffset - shapeMargin}px ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
+          ${textShapeRect.left - containerRect.left + containerPaddingLeft + textShapeOffset - shapeMargin}px ${(textShapeRect.top  - containerRect.top + containerPaddingTop + textShapeSize)}px,
+          ${((textShapeRect.right - containerRect.left + containerPaddingLeft + textShapeOffset) / textShapeSize)}em ${(textShapeRect.top  - containerRect.top + containerPaddingTop + textShapeSize)}px`;
+      }
+    }
+    console.log(shapeString);
+    tag.style.shapeOutside = `polygon(${shapeString})`;
+
+
+
+
+
+
+    // Attach the created elements to the shadow dom
 
   }
-  //console.log(shapeString);
-  textShape.style.shapeOutside = `polygon(${shapeString})`;
-
 }
-
-window.addEventListener("load", (event) => {
-  TraceText();
-});
-
-window.addEventListener("resize", (event) => {
-  TraceText();
-});
-
-window.addEventListener("change", (event) => {
-  TraceText();
-});
-
-    }
-}
-
 customElements.define('shape-outside-linebox', SHAPE_OUTSIDE_LINEBOX);
 
 
