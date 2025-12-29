@@ -1,4 +1,4 @@
-class SHAPE_OUTSIDE_LINEBOX extends HTMLElement {
+class SHAPE_OUTSIDE_LINE_BOX extends HTMLElement {
   static get observedAttributes() { return ['tag', 'text', 'max-width']; }
 
   constructor() {
@@ -8,7 +8,7 @@ class SHAPE_OUTSIDE_LINEBOX extends HTMLElement {
   connectedCallback() {
 
     // Create a shadow root
-    const shadow = this.attachShadow({ mode: "open" });
+    //const shadow = this.attachShadow({ mode: "open" });
 
     // Create element and classes
     const tag = document.createElement((this.getAttribute('tag') || 'div').toLowerCase());
@@ -26,7 +26,7 @@ class SHAPE_OUTSIDE_LINEBOX extends HTMLElement {
     const textAttr = this.getAttribute('text');
     tag.textContent = textAttr !== null ? textAttr : elementText || '';
 
-    shadow.appendChild(tag);
+    this.appendChild(tag);
 
     function lineboxWrap() {
 
@@ -95,7 +95,7 @@ class SHAPE_OUTSIDE_LINEBOX extends HTMLElement {
 
   }
 }
-customElements.define('shape-outside-linebox', SHAPE_OUTSIDE_LINEBOX);
+customElements.define('shape-outside-line-box', SHAPE_OUTSIDE_LINE_BOX);
 
 
 
