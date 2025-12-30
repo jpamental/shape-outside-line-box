@@ -8,10 +8,10 @@ A web component that will create a polygon shape around the supplied text string
 Initially designed to typeset headings so that paragraph text could flow around in an interesting and dynamic way, it could be applied to any text element.
 - Add a link reference to your page to include `wc-shape-outside-line-box.js`
 - Insert the `<shape-outside-line-box tag="[html tag]" max-width="[n%]" float-side="[left or right]" text="[your text]"></shape-outside-line-box>` custom tag in your page
-- - *`tag`*: the desired containing HTML tag (defaults to a `div` if not supplied)
-- - *`max-width`*: maximum width of the element as a percentage of the containing element (defaults to `50%` if not supplied)
-- - *`float-side`*: side to which the element should float (with matching text alignment (defaults to `left` if not supplied)
-- - *`text`*: the text to be included in the new element (REQUIRED)
+-- **`tag`**: the desired containing HTML tag (defaults to a `div` if not supplied)
+-- **`max-width`**: maximum width of the element as a percentage of the containing element (defaults to `50%` if not supplied)
+-- **`float-side`**: side to which the element should float (with matching text alignment (defaults to `left` if not supplied)
+-- **`text`**: the text to be included in the new element (REQUIRED)
 
 ## Example
 The `example.html` file contains a working example page to demonstrate the effect. It is also published here: 
