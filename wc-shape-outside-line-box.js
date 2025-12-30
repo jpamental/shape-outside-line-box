@@ -7,19 +7,26 @@ class SHAPE_OUTSIDE_LINE_BOX extends HTMLElement {
 
   connectedCallback() {
 
-    // Create a shadow root
-    //const shadow = this.attachShadow({ mode: "open" });
-
-    // Create element and classes
+    // Create HTML element and identifying class (defaults to 'div' if no tag attribute is supplied)
     const tag = document.createElement((this.getAttribute('tag') || 'div').toLowerCase());
-    tag.setAttribute("class", "shape-outside-linebox");
+    tag.setAttribute("class", "shape-outside-line-box");
 
+    // Set initial values with fallback defaults
+
+    // Not a great demo if nothing floats around it, so set a default if one isn't supplied
     const floatSide = (this.getAttribute('float-side') || 'left').toLowerCase();
-    const maxWidth = (this.getAttribute('max-width') || '75%');
+
+    // Also less interesting if the element is full-width, so setting a default of 50%
+    const maxWidth = (this.getAttribute('max-width') || '50%');
+
+    // Assign float and matching text alignment
     tag.style.cssFloat = floatSide;
     tag.style.textAlign = floatSide;
-    tag.style.margin = 0;
+
+    //tag.style.margin = 0;
     tag.style.maxWidth = maxWidth;
+
+    // Stylistic choice for more balanced layout
     tag.style.textWrap = 'balance'
 
 
@@ -30,68 +37,71 @@ class SHAPE_OUTSIDE_LINE_BOX extends HTMLElement {
 
     function lineboxWrap() {
 
-        let textShape = tag;
+      
+      let textShape = tag;
 
-        let textShapeStyle = getComputedStyle(textShape);
-        let textShapeSize = parseFloat(textShapeStyle.getPropertyValue('font-size'));
+      let textShapeStyle = getComputedStyle(textShape);
+      let textShapeSize = parseFloat(textShapeStyle.getPropertyValue('font-size'));
+      
+      let textShapeRange = document.createRange();
+      textShapeRange.selectNodeContents(textShape);
+
+      let textShapeRects = textShapeRange.getClientRects();
+
+      // Get the container's position to use as an offset for absolute positioning
+      let containerRect = textShape.getBoundingClientRect();
+
+      // Get container's margin and padding to use as offsets
+      let containerMarginInlineStart = parseFloat(textShapeStyle.marginInlineStart);
+      let containerMarginBlockStart = parseFloat(textShapeStyle.marginBlockStart);
+      let containerPaddingInlineStart = parseFloat(textShapeStyle.paddingInlineStart);
+      let containerPaddingBlockStart = parseFloat(textShapeStyle.paddingBlockStart);
+      let offsetInlineStart = containerMarginInlineStart + containerPaddingInlineStart;
+      let offsetBlockStart = containerMarginBlockStart + containerPaddingBlockStart;
+
+      // Create shape margin (instead of applying shape-margin property)
+      let shapeMargin =  textShapeSize / 2;  
+
+      // Create string to contain shape-outside polygon points
+      let shapeString = '';
+
+      for (let j = 0; j < textShapeRects.length; j++) {
+        let textShapeRect = textShapeRects[j];
+
+        // Create separator for multiple polygon points
+        let separator = ``;
+        if (j > 0) {
+          separator = `, `;
+        };
         
-        let textShapeRange = document.createRange();
-        textShapeRange.selectNodeContents(textShape);
-
-
-        let textShapeRects = textShapeRange.getClientRects();
-
-        // Get the container's position to use as an offset for absolute positioning
-        let containerRect = textShape.getBoundingClientRect();
-        let containerStyle = window.getComputedStyle(textShape);
-        let containerPaddingLeft = parseFloat(containerStyle.paddingLeft);
-        let containerPaddingTop = parseFloat(containerStyle.paddingTop);
-        let containerWidth = parseFloat(containerStyle.width);
-
-        // Create shape margin
-        let shapeMargin =  textShapeSize / 2;  
-
-        let shapeString = '';
-
-        for (let j = 0; j < textShapeRects.length; j++) {
-          let textShapeRect = textShapeRects[j];
-
-          let textShapeRectWidth = textShapeRect.width;
-
-          let separator = ``;
-          
-          if (j > 0) {
-            separator = `, `;
-          };
-          
-          if (floatSide == 'left') {
-            shapeString = shapeString + separator + `
-              ${textShapeRect.left - containerRect.left + containerPaddingLeft}px ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
-              ${((textShapeRect.right + shapeMargin - containerRect.left + containerPaddingLeft) / textShapeSize)}em ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
-              ${((textShapeRect.right + shapeMargin - containerRect.left + containerPaddingLeft) / textShapeSize)}em ${(textShapeRect.top  - containerRect.top + containerPaddingTop + textShapeSize)}px, 
-              ${textShapeRect.left - containerRect.left + containerPaddingLeft}px ${(textShapeRect.top  - containerRect.top + containerPaddingTop + textShapeSize)}px`;
-          } else {
-            shapeString = shapeString + separator + `
-              ${((textShapeRect.right - containerRect.left + containerPaddingLeft) / textShapeSize)}em ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
-              ${textShapeRect.left - containerRect.left + containerPaddingLeft - shapeMargin}px ${textShapeRect.top  - containerRect.top + containerPaddingTop}px, 
-              ${textShapeRect.left - containerRect.left + containerPaddingLeft - shapeMargin}px ${(textShapeRect.top  - containerRect.top + containerPaddingTop + textShapeSize)}px,
-              ${((textShapeRect.right - containerRect.left + containerPaddingLeft) / textShapeSize)}em ${(textShapeRect.top  - containerRect.top + containerPaddingTop + textShapeSize)}px`;
-          }
+        // Build shape-outside polygon points based on float side
+        if (floatSide == 'left') {
+          shapeString = shapeString + separator + `
+            ${textShapeRect.left - containerRect.left + offsetInlineStart}px ${textShapeRect.top  - containerRect.top + offsetBlockStart}px, 
+            ${((textShapeRect.right + shapeMargin - containerRect.left + offsetInlineStart) / textShapeSize)}em ${textShapeRect.top  - containerRect.top + offsetBlockStart}px, 
+            ${((textShapeRect.right + shapeMargin - containerRect.left + offsetInlineStart) / textShapeSize)}em ${(textShapeRect.top  - containerRect.top + offsetBlockStart + textShapeSize)}px, 
+            ${textShapeRect.left - containerRect.left + offsetInlineStart}px ${(textShapeRect.top  - containerRect.top + offsetBlockStart + textShapeSize)}px`;
+        } else {
+          shapeString = shapeString + separator + `
+            ${((textShapeRect.right - containerRect.left + offsetInlineStart) / textShapeSize)}em ${textShapeRect.top  - containerRect.top + offsetBlockStart}px, 
+            ${textShapeRect.left - containerRect.left + offsetInlineStart - shapeMargin}px ${textShapeRect.top  - containerRect.top + offsetBlockStart}px, 
+            ${textShapeRect.left - containerRect.left + offsetInlineStart - shapeMargin}px ${(textShapeRect.top  - containerRect.top + offsetBlockStart + textShapeSize)}px,
+            ${((textShapeRect.right - containerRect.left + offsetInlineStart) / textShapeSize)}em ${(textShapeRect.top  - containerRect.top + offsetBlockStart + textShapeSize)}px`;
         }
-        tag.style.shapeOutside = `polygon(${shapeString})`;
+      }
+
+      // Apply the calculated shape-outside polygon to the element
+      tag.style.shapeOutside = `polygon(${shapeString})`;
 
     }
+
+    // Call the function initially
     lineboxWrap();
 
+    // Recalculate on window resize
     window.addEventListener("resize", (event) => {
       lineboxWrap();
     });
-
-
-
-
-
-    // Attach the created elements to the shadow dom
 
   }
 }
