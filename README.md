@@ -13,6 +13,8 @@ Initially designed to typeset headings so that paragraph text could flow around 
   - **`float-side`**: side to which the element should float (with matching text alignment (defaults to `left` if not supplied)
   - **`text`**: the text to be included in the new element (REQUIRED)
 
+![Screenshot of a heading floated left and being wrapped by the following text](screnshot.jpeg)
+
 ## Example
 The `example.html` file contains a working example page to demonstrate the effect. It is also published here: 
 https://jpamental.github.io/shape-outside-line-box/example.html
