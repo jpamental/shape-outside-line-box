@@ -1,5 +1,5 @@
 class SHAPE_OUTSIDE_LINE_BOX extends HTMLElement {
-  static get observedAttributes() { return ['tag', 'text', 'max-width']; }
+  static get observedAttributes() { return ['tag', 'float-side', 'max-width', 'text']; }
 
   constructor() {
     super();
@@ -37,15 +37,16 @@ class SHAPE_OUTSIDE_LINE_BOX extends HTMLElement {
 
     function lineboxWrap() {
 
-      
+      // Select the element to apply shape-outside to
       let textShape = tag;
 
+      // Get computed styles and font size (for em unit and shape margin calculations)
       let textShapeStyle = getComputedStyle(textShape);
       let textShapeSize = parseFloat(textShapeStyle.getPropertyValue('font-size'));
       
+      // Create array of text line boxes
       let textShapeRange = document.createRange();
       textShapeRange.selectNodeContents(textShape);
-
       let textShapeRects = textShapeRange.getClientRects();
 
       // Get the container's position to use as an offset for absolute positioning
@@ -65,6 +66,7 @@ class SHAPE_OUTSIDE_LINE_BOX extends HTMLElement {
       // Create string to contain shape-outside polygon points
       let shapeString = '';
 
+      // Loop through each line box rect to build shape-outside polygon points
       for (let j = 0; j < textShapeRects.length; j++) {
         let textShapeRect = textShapeRects[j];
 
