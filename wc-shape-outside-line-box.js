@@ -101,6 +101,11 @@ class SHAPE_OUTSIDE_LINE_BOX extends HTMLElement {
     lineboxWrap();
 
     // Recalculate on window resize
+    window.addEventListener("load", (event) => {
+      lineboxWrap();
+    });
+
+    // Recalculate on window resize
     window.addEventListener("resize", (event) => {
       lineboxWrap();
     });
